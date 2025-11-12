@@ -1,0 +1,21 @@
+pandas
+PyMySQL
+mysql-connector-python
+google-auth
+google-api-core
+google-cloud-storage
+google-cloud-storage-transfer
+google-cloud-secret-manager
+paramiko
+google-cloud-bigquery
+db-dtypes
+pyjsparser
+boto3
+pyodbc
+pymssql
+requests
+scp
+SQLAlchemy>=2.0.0
+mysql-connector-python
+pandas  # Optional, if you do any data frame processing
+mysqlclient

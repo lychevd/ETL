@@ -1,0 +1,48 @@
+steps:
+  # Build Project Version with SHORT_SHA
+  - name: docker
+    id: 'build'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-east1-docker.pkg.dev/$PROJECT_ID/$_DOCKER_REPO/$_REGISTRY_IMAGE_NAME:$BUILD_ID'
+      - '-f'
+      - 'Dockerfile'
+      - '.'
+  # Push image with SHORT_SHA
+  - name: docker
+    id: 'push_sha'
+    waitFor: ['build']
+    args:
+      - 'push'
+      - 'us-east1-docker.pkg.dev/$PROJECT_ID/$_DOCKER_REPO/$_REGISTRY_IMAGE_NAME:$BUILD_ID'
+
+  # Tag the image with "latest"
+  - name: docker
+    id: 'tag_latest'
+    waitFor: ['push_sha']
+    args:
+      - 'tag'
+      - 'us-east1-docker.pkg.dev/$PROJECT_ID/$_DOCKER_REPO/$_REGISTRY_IMAGE_NAME:$BUILD_ID'
+      - 'us-east1-docker.pkg.dev/$PROJECT_ID/$_DOCKER_REPO/$_REGISTRY_IMAGE_NAME:latest'
+
+  # Push image with "latest" tag
+  - name: docker
+    id: 'push_latest'
+    waitFor: ['tag_latest']
+    args:
+      - 'push'
+      - 'us-east1-docker.pkg.dev/$PROJECT_ID/$_DOCKER_REPO/$_REGISTRY_IMAGE_NAME:latest'
+
+substitutions:
+  _DOCKER_REPO: gold-docker-repo
+  _REGISTRY_IMAGE_NAME: dis_all_managers
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+images:
+  - 'us-east1-docker.pkg.dev/$PROJECT_ID/$_DOCKER_REPO/$_REGISTRY_IMAGE_NAME:$BUILD_ID'
+  - 'us-east1-docker.pkg.dev/$PROJECT_ID/$_DOCKER_REPO/$_REGISTRY_IMAGE_NAME:latest'
+
+tags: ['dis_all_managers']
